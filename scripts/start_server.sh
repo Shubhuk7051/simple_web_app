@@ -1,39 +1,20 @@
-# #!/bin/bash
-# cd /var/www/flaskapp
-# pip3 install -r requirements.txt
-# nohup python3 app.py > app.log 2>&1 &
-
 #!/bin/bash
 
-# Update package list and install Python and pip
-sudo apt-get update -y
-sudo apt-get install python3 python3-pip python3-venv -y
+# Set the working directory
+APP_DIR="/home/ubuntu/projects/flaskapp"
+DOCKER_IMAGE="flaskapp:latest"
 
-# Navigate to the Flask application directory
-cd /var/www/flaskapp || exit
+# Create the working directory if it doesn't exist
+mkdir -p ${APP_DIR}
 
-# Create a virtual environment (if it doesn't exist already)
-if [ ! -d "venv" ]; then
-    python3 -m venv venv
-    echo "Virtual environment created."
-fi
+# Stop and remove any existing Docker containers
+docker ps -q --filter "name=flaskapp_container" | xargs -r docker stop
+docker ps -aq --filter "name=flaskapp_container" | xargs -r docker rm
 
-# Activate the virtual environment
-source venv/bin/activate
+# Pull the latest Docker image from the Docker registry
+docker pull ${DOCKER_IMAGE}
 
-# Install Python dependencies inside the virtual environment
-pip install -r requirements.txt
-
-# Deactivate any running instances of the application
-if pgrep -f "python3 app.py"; then
-    echo "Stopping existing application..."
-    pkill -f "python3 app.py"
-fi
-
-# Start the Flask application in the background using the virtual environment's Python
-nohup venv/bin/python app.py > app.log 2>&1 &
+# Run the Docker container
+docker run -d --name flaskapp_container -p 5000:5000 ${DOCKER_IMAGE}
 
 echo "Flask application started successfully."
-
-# Deactivate the virtual environment
-deactivate
