@@ -4,6 +4,10 @@ files:
   - source: /
     destination: /home/ubuntu/projects/flaskapp
 hooks:
+  BeforeInstall:
+    - location: scripts/set_permissions.sh
+      timeout: 300
+      runas: root
   AfterInstall:
     - location: scripts/start_server.sh
       timeout: 300
