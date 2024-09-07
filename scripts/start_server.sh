@@ -26,7 +26,7 @@ echo "Pulling Docker image ${DOCKER_REPO}:${DOCKER_TAG}..."
 docker pull ${DOCKER_REPO}:${DOCKER_TAG}
 
 # Run the Docker container
-eecho "Starting the Docker container with image ${DOCKER_REPO}:${DOCKER_TAG}..."
+echo "Starting the Docker container with image ${DOCKER_REPO}:${DOCKER_TAG}..."
 docker run -d --name ${CONTAINER_NAME} -p 5000:5000 ${DOCKER_REPO}:${DOCKER_TAG}
 
 if [ $? -eq 0 ]; then
